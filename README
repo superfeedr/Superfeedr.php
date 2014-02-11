@@ -1,5 +1,0 @@
-PHP library for Superfeedr's Pubsubhubbub (client).
-
-Modified from Adrián Navarro original library.
-
-endpoint.php should be your callback and subscriber.php is an example script subscribing a feed.
