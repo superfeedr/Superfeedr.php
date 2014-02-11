@@ -4,7 +4,7 @@ require_once 'Superfeedr.php';
 $username = 'demo'; // your superfeedr username
 $password = 'demo'; // your superfeedr password
 $callback = ''; // your callback URL
-$secret   = 'thisissecret'; // Important if you want to get secure notifications.
+$secret   = 'thisissecret'; // Important. Please, set me up and resubscribe if you change me!
 
 /**
  * Example feed.

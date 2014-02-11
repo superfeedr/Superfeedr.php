@@ -3,8 +3,8 @@ require_once 'Superfeedr.php';
 
 $username = 'demo'; // your superfeedr username
 $password = 'demo'; // your superfeedr password
-$callback = 'http://ouvre-boite.com/debug/endpoint.php'; // your callback URL
-$secret   = 'thisissecret';
+$callback = ''; // your callback URL
+$secret   = 'thisissecret'; // Important. Please, set me up and resubscribe if you change me!
 
 /**
  * Example feed.
