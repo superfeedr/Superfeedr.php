@@ -1,32 +1,26 @@
 <?php
 require_once 'Superfeedr.php';
 
-$username = 'XXXXXXXXXX'; // your superfeedr username
-$password = 'XXXXXXXXXX'; // your superfeedr password
-$callback = 'http//XXXX'; // your callback URL
+$username = 'demo'; // your superfeedr username
+$password = 'demo'; // your superfeedr password
+$callback = ''; // your callback URL
+$secret   = 'thisissecret'; // Important if you want to get secure notifications.
 
 /**
  * Example feed.
  *
- * Go to http://pubsubhubbub-example-app.appspot.com to update it.
+ * Go to http://push-pub.appspot.com/ to update it once you're subscribed to it. (see subscribe.php)
  */
-$feed = 'http://pubsubhubbub-example-app.appspot.com/feed';
 
-$superfeedr = new Superfeedr($username, $password, $callback);
+$superfeedr = new Superfeedr($username, $password, $callback, $secret);
 
-//
-// Is it a verification callback?
-//
-if (!$res = $superfeedr->verify()) {
+
+$json = $superfeedr->callback($secret);
+
     //
-    // It must be a regular callback, with content.
+    // Dump the content to a file... or fo whatever you need with it!
     //
-    $json = $superfeedr->callback();
-    
-    //
-    // Dump the content to a file.
-    //
-    file_put_contents('result.txt', print_r($json, true) . "\n", FILE_APPEND);
-}
+file_put_contents('result.txt', print_r($json,true) . "\n", FILE_APPEND);
+
 
 ?>

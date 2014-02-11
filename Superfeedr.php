@@ -2,7 +2,7 @@
 /*
 The MIT License
 
-Copyright (c) 2010 - Adrián Navarro, Bruno Pedro
+Copyright (c) 2010 - Adrián Navarro, Bruno Pedro, Superfeedr
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,10 +29,10 @@ THE SOFTWARE.
  * @author Bruno Pedro <bpedro@tarpipe.com>
  */
 class Superfeedr {
-    private $apiUrl = 'https://superfeedr.com/hubbub';
-	private $callback = null;
-	private $authentication = null;
-	private $hubSecret = 'myHubSecret';
+    private $apiUrl = 'https://push.superfeedr.com/';
+    private $callback = null;
+    private $authentication = null;
+    private $hubSecret = 'myHubSecret';
 
     /**
      * Superfeedr constructor
@@ -87,14 +87,14 @@ class Superfeedr {
      * in case something goes wrong.
      *
      * @param string &$ch The curl resource (see http://php.net/manual/en/function.curl-exec.php)
-     * @return mixed The curl execution result, typically the HTTP content.     
+     * @return mixed The curl execution result, typically the HTTP content.
      * @uses curl_exec
      */
     private function curlExec(&$ch)
     {
         $res = curl_exec($ch);
         if (false === $res) {
-            throw new Exception(curl_error($ch), curl_errno($ch)); 
+            throw new Exception(curl_error($ch), curl_errno($ch));
         }
         return $res;
     }
@@ -119,17 +119,15 @@ class Superfeedr {
     public function call($action, $url, $hubSecret = null)
     {
         if (!empty($hubSecret)) {
-	        $this->hubSecret = $hubSecret;
-	    }
+            $this->hubSecret = $hubSecret;
+        }
 
         $params = array(
-            'hub.callback' => $this->callback,
-            'hub.mode' => $action,
-            'hub.topic' => $url,
-            'hub.verify' => 'sync',
-            'hub.verify_token' => urlencode(md5($action . $this->hubSecret)),
-            'hub.secret' => urlencode(sha1($this->hubSecret))
-        );
+                        'hub.callback' => $this->callback,
+                        'hub.mode' => $action,
+                        'hub.topic' => $url,
+                        'hub.secret' => urlencode(sha1($this->hubSecret))
+                        );
 
         $ch = curl_init($this->apiUrl);
         $this->setCurlOptions($ch, array('Accept: application/json'));
@@ -150,10 +148,10 @@ class Superfeedr {
     public function subscribe($url, $hubSecret = null)
     {
         $res = $this->call('subscribe', $url, $hubSecret);
-        if (!empty($res['info']['http_code']) &&
-            $res['info']['http_code'] == 204) {
+        if (!empty($res['info']['http_code']) && $res['info']['http_code'] == 204) {
             return true;
         } else {
+            error_log('Could not subscribe. ')
             return false;
         }
     }
@@ -169,10 +167,10 @@ class Superfeedr {
     public function unsubscribe($url, $hubSecret = null)
     {
         $res = $this->call('unsubscribe', $url, $hubSecret);
-        if (!empty($res['info']['http_code']) &&
-            $res['info']['http_code'] == 204) {
+        if (!empty($res['info']['http_code']) && $res['info']['http_code'] == 204) {
             return true;
         } else {
+            error_log('Could not unsubscribe. ')
             return false;
         }
     }
@@ -189,35 +187,14 @@ class Superfeedr {
     public function retrieve($url)
     {
         $params = array(
-            'hub.mode' =>'retrieve',
-            'hub.topic' => $url,
-        );
+                        'hub.mode' =>'retrieve',
+                        'hub.topic' => $url,
+                        );
         $ch = curl_init($this->apiUrl . '?' . http_build_query($params));
         $this->setCurlOptions($ch, array('Accept: application/json'));
         $res = $this->curlExec($ch);
         return array('info' => curl_getinfo($ch), 'data' => $res);
     }
-
-    /**
-     * Receives a verification call from Superfeedr and responds.
-     *
-     * @param string $hubSecret Optional hub secret.
-     * @return array The data sent from Superfeedr
-     **/
-	function verify($hubSecret = null)
-	{
-	    if (!empty($hubSecret)) {
-	        $this->hubSecret = $hubSecret;
-	    }
-
-		if (!empty($_GET['hub_verify_token']) &&
-		    $_GET['hub_verify_token'] == md5($_GET['hub_mode'] . $this->hubSecret)) {
-			echo $_GET['hub_challenge'];
-			return $_GET;
-		} else {
-		    return false;
-		}
-	}
 
     /**
      * Receives a callback from Superfeedr and validate its authenticity.
@@ -230,21 +207,27 @@ class Superfeedr {
      * @uses sha1
      * @uses json_decode
      **/
-	function callback($hubSecret = null)
-	{
-	    if (!empty($hubSecret)) {
-	        $this->hubSecret = $hubSecret;
-	    }
+    public function callback($hubSecret = null)
+    {
+        if (!empty($hubSecret)) {
+            $this->hubSecret = $hubSecret;
+        }
 
-		if ($input = file_get_contents('php://input')) {
-			if($check = trim($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
-				$sum = hash_hmac('sha1', $input, sha1($this->hubSecret));
-				if($check == 'sha1=' . $sum) {
-					return json_decode($input);
-				}
-			}
-		}
-		return false;
-	}
+        if ($input = file_get_contents('php://input')) {
+            if($check = trim($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
+                $sum = hash_hmac('sha1', $input, sha1($this->hubSecret));
+                if($check == 'sha1=' . $sum) {
+                    return json_decode($input);
+                }
+                else {
+                    error_log('Wrong signature. Expected '.'sha1=' . $sum.' but got '.$check.'. Ignoring notification.');
+                }
+            }
+            else {
+                error_log('Missing signature. Ignoring notification.');
+            }
+        }
+        return false;
+    }
 }
 ?>

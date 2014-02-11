@@ -1,21 +1,22 @@
 <?php
 require_once 'Superfeedr.php';
 
-$username = 'XXXXXXXXXX'; // your superfeedr username
-$password = 'XXXXXXXXXX'; // your superfeedr password
-$callback = 'http//XXXX'; // your callback URL
+$username = 'demo'; // your superfeedr username
+$password = 'demo'; // your superfeedr password
+$callback = 'http://ouvre-boite.com/debug/endpoint.php'; // your callback URL
+$secret   = 'thisissecret';
 
 /**
  * Example feed.
  *
- * Go to http://pubsubhubbub-example-app.appspot.com to update it.
+ * Go to hhttp://push-pub.appspot.com/ to update it.
  */
-$feed = 'http://pubsubhubbub-example-app.appspot.com/feed';
+$feed = 'http://push-pub.appspot.com/feed';
 
-$superfeedr = new Superfeedr($username, $password, $callback);
+$superfeedr = new Superfeedr($username, $password, $callback, $secret);
 
 if ($superfeedr->subscribe($feed)) {
-    echo 'Subscribed' . "\n";
+  echo 'Subscribed' . "\n";
 }
 
 ?>
