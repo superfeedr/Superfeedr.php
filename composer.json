@@ -1,0 +1,20 @@
+{
+    "name": "superfeedr/http-pubsubhubbub",
+    "type": "library",
+    "description": "Superfeedr provides a realtime API to any application who wants to produce (publishers) or consume (subscribers) data feeds without wasting resources and maintaining an expensive and changing infrastructure.",
+    "keywords": [ "superfeedr", "pubsubhubbub", "publishers", "subscribers", "data", "feeds"],
+    "homepage": "https://github.com/superfeedr/Superfeedr.php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Superfeedr Contributors",
+            "homepage": "https://github.com/superfeedr/Superfeedr.php/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {        
+        "classmap": ["Superfeedr.php"]
+    }
+}
