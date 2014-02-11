@@ -151,7 +151,7 @@ class Superfeedr {
         if (!empty($res['info']['http_code']) && $res['info']['http_code'] == 204) {
             return true;
         } else {
-            error_log('Could not subscribe. ')
+            error_log('Could not subscribe.');
             return false;
         }
     }
@@ -170,7 +170,7 @@ class Superfeedr {
         if (!empty($res['info']['http_code']) && $res['info']['http_code'] == 204) {
             return true;
         } else {
-            error_log('Could not unsubscribe. ')
+            error_log('Could not unsubscribe. ');
             return false;
         }
     }
